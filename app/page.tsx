@@ -502,6 +502,194 @@ function KeyMetrics() {
   );
 }
 
+function InstantQuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [step, setStep] = useState(0);
+  const [selectedService, setSelectedService] = useState<string | null>(null);
+
+  const services = useMemo(
+    () => [
+      { id: "tires", label: "Tires & Wheels", estimate: "$85 – $200", icon: Disc3 },
+      { id: "oil", label: "Oil Change", estimate: "$45 – $95", icon: Wrench },
+      { id: "brakes", label: "Brake Service", estimate: "$150 – $400", icon: ShieldCheck },
+      { id: "diagnostics", label: "Engine Diagnostics", estimate: "$95 – $150", icon: Gauge },
+    ],
+    [],
+  );
+
+  const handleSelect = (id: string) => {
+    setSelectedService(id);
+    setStep(1);
+  };
+
+  const handleReset = () => {
+    setStep(0);
+    setSelectedService(null);
+  };
+
+  useEffect(() => {
+    if (!open) {
+      setTimeout(() => {
+        handleReset();
+      }, 300);
+    }
+  }, [open]);
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+        >
+          <div
+            className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+            onClick={onClose}
+          />
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 20 }}
+            transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+            className="glass-panel relative w-full max-w-lg overflow-hidden rounded-3xl p-6 shadow-[0_50px_100px_rgba(0,0,0,0.5)] md:p-8"
+          >
+            <div className="pointer-events-none absolute inset-0 opacity-60 texture-carbon" />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(220,38,38,0.2),rgba(15,23,42,0)_55%)]" />
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/15 bg-slate-950/50 text-slate-200/70 transition-colors hover:bg-slate-200/10 hover:text-slate-100"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <AnimatePresence mode="wait">
+              {step === 0 ? (
+                <motion.div
+                  key="step-0"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative"
+                >
+                  <p className="font-mono text-xs uppercase tracking-[0.32em] text-slate-200/60">
+                    Instant quote
+                  </p>
+                  <h3 className="mt-3 font-display text-2xl uppercase tracking-[-0.03em] text-slate-100 md:text-3xl">
+                    What do you need?
+                  </h3>
+                  <p className="mt-2 text-sm text-slate-200/70">
+                    Select a service for an instant price estimate.
+                  </p>
+
+                  <div className="mt-6 grid grid-cols-2 gap-3">
+                    {services.map((s) => {
+                      const Icon = s.icon;
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => handleSelect(s.id)}
+                          className="group flex flex-col items-start gap-3 rounded-2xl border border-slate-200/12 bg-slate-950/40 p-4 text-left transition-all duration-200 hover:border-red-500/40 hover:bg-red-600/10"
+                        >
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200/15 bg-slate-950/50 transition-colors group-hover:border-red-500/30 group-hover:bg-red-600/15">
+                            <Icon className="h-5 w-5 text-slate-200/70 transition-colors group-hover:text-red-400" />
+                          </div>
+                          <div>
+                            <div className="font-display text-sm uppercase tracking-[0.12em] text-slate-100">
+                              {s.label}
+                            </div>
+                            <div className="mt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-200/50">
+                              {s.estimate}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="step-1"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative"
+                >
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="mb-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-slate-200/60 transition-colors hover:text-slate-100"
+                  >
+                    <ArrowRight className="h-3 w-3 rotate-180" />
+                    Back
+                  </button>
+
+                  {(() => {
+                    const selected = services.find((s) => s.id === selectedService);
+                    if (!selected) return null;
+                    const Icon = selected.icon;
+
+                    return (
+                      <>
+                        <div className="flex items-start gap-4">
+                          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-red-500/30 bg-red-600/15">
+                            <Icon className="h-7 w-7 text-red-400" />
+                          </div>
+                          <div>
+                            <p className="font-mono text-xs uppercase tracking-[0.32em] text-slate-200/60">
+                              Estimated price
+                            </p>
+                            <h3 className="mt-1 font-display text-3xl uppercase tracking-[-0.03em] text-slate-100">
+                              {selected.estimate}
+                            </h3>
+                          </div>
+                        </div>
+
+                        <div className="mt-6 rounded-2xl border border-slate-200/12 bg-slate-950/40 p-4">
+                          <p className="font-display text-lg uppercase tracking-[-0.02em] text-slate-100">
+                            {selected.label}
+                          </p>
+                          <p className="mt-2 text-sm text-slate-200/70">
+                            Final price depends on vehicle type and specific needs. Book now for an exact quote after inspection.
+                          </p>
+                        </div>
+
+                        <div className="mt-6 space-y-3">
+                          {["Same-day availability", "Digital inspection included", "2-year warranty"].map((t) => (
+                            <div key={t} className="flex items-center gap-3">
+                              <CheckCircle2 className="h-4 w-4 text-red-400" />
+                              <span className="text-sm text-slate-200/80">{t}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <a
+                          href="tel:+12812355708"
+                          className="mt-6 flex w-full items-center justify-center gap-3 rounded-full bg-red-600 px-6 py-3.5 font-display text-sm uppercase tracking-[0.18em] text-white shadow-lg shadow-red-600/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                          <PhoneCall className="h-4 w-4" />
+                          Call for exact quote
+                        </a>
+                      </>
+                    );
+                  })()}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 type BentoId = "tires" | "diagnostics" | "brakes" | "roadside";
 
 function ServicesBento() {
@@ -1358,6 +1546,7 @@ function ServiceMenuForm() {
 
 export default function Page() {
   const { scrollTo } = useSmoothScroll();
+  const [quoteOpen, setQuoteOpen] = useState(false);
 
   return (
     <main className="relative overflow-hidden texture-carbon">
@@ -1413,12 +1602,12 @@ export default function Page() {
 
               <button
                 type="button"
-                onClick={() => scrollTo("#services", { offset: -80 })}
+                onClick={() => setQuoteOpen(true)}
                 className="glass-panel inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 transition-all duration-300 hover:bg-slate-200/10 hover:border-slate-200/25 sm:w-auto sm:px-5 sm:py-3"
               >
-                <Wrench className="h-4 w-4 text-slate-200/70" />
+                <Sparkles className="h-4 w-4 text-red-400" />
                 <span className="font-mono text-xs uppercase tracking-[0.22em] text-slate-200/70">
-                  Digital inspections
+                  Instant Quote
                 </span>
               </button>
             </motion.div>
@@ -1430,6 +1619,7 @@ export default function Page() {
       <FloatingNav />
       <MobileCTA />
       <TrustTicker />
+      <KeyMetrics />
       <ServicesBento />
       <ProcessTimeline />
       <Reviews />
@@ -1446,6 +1636,8 @@ export default function Page() {
           </div>
         </div>
       </footer>
+
+      <InstantQuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} />
     </main>
   );
 }
