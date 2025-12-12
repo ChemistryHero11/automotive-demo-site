@@ -18,8 +18,19 @@ const fontDisplay = Oswald({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://automotive-demo-site.vercel.app"),
   title: "Pro Auto Services",
   description: "Dealer precision. Local heart.",
+  openGraph: {
+    title: "Pro Auto Services",
+    description: "Dealer precision. Local heart. High-end automotive care for tires, mechanics, and roadside response.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pro Auto Services",
+    description: "Dealer precision. Local heart.",
+  },
 };
 
 export default function RootLayout({

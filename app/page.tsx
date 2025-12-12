@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  AnimatePresence,
   motion,
   useMotionValue,
   useScroll,
@@ -10,17 +11,23 @@ import {
 } from "framer-motion";
 import {
   ArrowRight,
+  BadgeCheck,
   Calendar,
   Car,
   CheckCircle2,
   ChevronDown,
+  Clock,
   Disc3,
   Gauge,
   LifeBuoy,
+  MapPin,
+  PhoneCall,
   ShieldCheck,
+  Sparkles,
   Star,
   Video,
   Wrench,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -236,6 +243,7 @@ function MagneticButton({
 
 function FloatingNav() {
   const { scrollTo } = useSmoothScroll();
+  const [activeSection, setActiveSection] = useState<string>("#services");
 
   const links = useMemo(
     () => [
@@ -247,35 +255,117 @@ function FloatingNav() {
     [],
   );
 
+  useEffect(() => {
+    const sections = ["services", "reviews", "faq", "book"];
+    const observers: IntersectionObserver[] = [];
+
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveSection(`#${id}`);
+            }
+          });
+        },
+        { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
+      );
+
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
+
   return (
     <motion.nav
       initial={{ opacity: 0, y: 20, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1], delay: 0.4 }}
-      className="fixed bottom-4 left-1/2 z-50 w-[min(640px,calc(100%-2rem))] -translate-x-1/2 sm:bottom-6"
+      className="fixed bottom-20 left-1/2 z-50 hidden w-[min(640px,calc(100%-2rem))] -translate-x-1/2 md:bottom-6 md:block"
     >
       <div className="glass-panel relative overflow-hidden rounded-full px-3 py-3 shadow-[0_30px_90px_rgba(0,0,0,0.55)]">
         <div className="pointer-events-none absolute inset-0 opacity-60 noise-surface" />
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(226,232,240,0.12),rgba(15,23,42,0)_60%)]" />
 
         <div className="relative grid grid-cols-4 gap-1">
-          {links.map((l) => (
-            <button
-              key={l.href}
-              type="button"
-              onClick={() => scrollTo(l.href, { offset: -80 })}
-              className={
-                "rounded-full px-2 py-3 text-[10px] font-display uppercase tracking-[0.14em] sm:py-2 sm:text-xs sm:tracking-[0.22em] " +
-                "text-slate-200/90 transition-colors duration-200 " +
-                "hover:bg-slate-200/10 hover:text-slate-100"
-              }
-            >
-              {l.label}
-            </button>
-          ))}
+          {links.map((l) => {
+            const isActive = activeSection === l.href;
+            return (
+              <button
+                key={l.href}
+                type="button"
+                onClick={() => scrollTo(l.href, { offset: -80 })}
+                className={
+                  "relative rounded-full px-2 py-3 text-[10px] font-display uppercase tracking-[0.14em] sm:py-2 sm:text-xs sm:tracking-[0.22em] " +
+                  "transition-colors duration-200 " +
+                  (isActive
+                    ? "text-slate-100"
+                    : "text-slate-200/70 hover:bg-slate-200/10 hover:text-slate-100")
+                }
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-pill"
+                    className="absolute inset-0 rounded-full bg-red-600/25 border border-red-500/30"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="relative">{l.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </motion.nav>
+  );
+}
+
+function MobileCTA() {
+  const { scrollTo } = useSmoothScroll();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1], delay: 0.5 }}
+      className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
+    >
+      <div className="glass-panel border-t border-slate-200/10 px-4 py-3 shadow-[0_-10px_40px_rgba(0,0,0,0.4)]">
+        <div className="flex items-center justify-between gap-2">
+          <a
+            href="tel:+12812355708"
+            className="flex flex-1 flex-col items-center gap-1 rounded-xl py-2 text-slate-200/80 transition-colors hover:bg-slate-200/10 hover:text-slate-100"
+          >
+            <PhoneCall className="h-5 w-5" />
+            <span className="font-mono text-[9px] uppercase tracking-[0.18em]">Call</span>
+          </a>
+
+          <button
+            type="button"
+            onClick={() => scrollTo("#book", { offset: -80 })}
+            className="flex flex-[2] items-center justify-center gap-2 rounded-full bg-red-600 px-6 py-3 font-display text-xs uppercase tracking-[0.18em] text-white shadow-lg shadow-red-600/25 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <Calendar className="h-4 w-4" />
+            Book Now
+          </button>
+
+          <a
+            href="https://maps.google.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-1 flex-col items-center gap-1 rounded-xl py-2 text-slate-200/80 transition-colors hover:bg-slate-200/10 hover:text-slate-100"
+          >
+            <MapPin className="h-5 w-5" />
+            <span className="font-mono text-[9px] uppercase tracking-[0.18em]">Directions</span>
+          </a>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -300,6 +390,112 @@ function TrustTicker() {
               <span key={`b-${i}`}>{line}</span>
             ))}
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function KeyMetrics() {
+  const metrics = useMemo(
+    () => [
+      {
+        label: "Average rating",
+        value: "4.9",
+        meta: "500+ verified reviews",
+        icon: BadgeCheck,
+      },
+      {
+        label: "Tow response",
+        value: "15 min",
+        meta: "Priority dispatch",
+        icon: Clock,
+      },
+      {
+        label: "Digital inspections",
+        value: "Every visit",
+        meta: "Video + photos",
+        icon: Video,
+      },
+      {
+        label: "Warranty",
+        value: "2 years",
+        meta: "Parts + labor",
+        icon: ShieldCheck,
+      },
+    ],
+    [],
+  );
+
+  return (
+    <section className="relative py-16 md:py-24">
+      <div className="pointer-events-none absolute inset-0 opacity-28 noise-surface" />
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
+        <motion.div
+          className="max-w-2xl"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.25 }}
+          variants={stagger}
+        >
+          <motion.p
+            variants={fadeUp}
+            className="font-mono text-xs uppercase tracking-[0.22em] text-slate-200/70 sm:tracking-[0.32em]"
+          >
+            The proof
+          </motion.p>
+          <motion.h2
+            variants={fadeUp}
+            className="mt-4 font-display text-3xl uppercase tracking-[-0.04em] text-slate-100 sm:text-4xl md:text-5xl"
+          >
+            Numbers that sell the service.
+          </motion.h2>
+          <motion.p variants={fadeUp} className="mt-4 text-sm text-slate-200/75 md:text-base">
+            A quick snapshot that makes the value feel immediate.
+          </motion.p>
+        </motion.div>
+
+        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {metrics.map((m, idx) => {
+            const Icon = m.icon;
+
+            return (
+              <motion.article
+                key={m.label}
+                initial={{ opacity: 0, y: 26 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{
+                  y: -6,
+                  boxShadow:
+                    "0 22px 44px -14px rgba(220, 38, 38, 0.22), 0 0 0 1px rgba(226, 232, 240, 0.1)",
+                  transition: { duration: 0.25 },
+                }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1], delay: idx * 0.04 }}
+                className="glass-panel relative overflow-hidden rounded-2xl p-6 md:p-7 transition-all duration-300"
+              >
+                <div className="pointer-events-none absolute inset-0 opacity-55 texture-carbon" />
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(226,232,240,0.12),rgba(15,23,42,0)_55%)]" />
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(220,38,38,0.20),rgba(15,23,42,0)_55%)]" />
+
+                <div className="relative flex items-start justify-between gap-6">
+                  <div>
+                    <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-200/55">
+                      {m.label}
+                    </p>
+                    <div className="mt-3 font-display text-3xl uppercase tracking-[-0.04em] text-slate-100">
+                      {m.value}
+                    </div>
+                    <p className="mt-2 text-sm text-slate-200/75">{m.meta}</p>
+                  </div>
+
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-red-500/30 bg-red-600/12">
+                    <Icon className="h-5 w-5 text-red-400" />
+                  </div>
+                </div>
+              </motion.article>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -895,6 +1091,11 @@ function Faq() {
 
 function ServiceMenuForm() {
   const [service, setService] = useState<string>("Tires");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [notes, setNotes] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
 
   const services = useMemo(
     () => [
@@ -906,8 +1107,37 @@ function ServiceMenuForm() {
     [],
   );
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: { name?: string; phone?: string } = {};
+
+    if (!name.trim()) newErrors.name = "Name is required";
+    if (!phone.trim()) newErrors.phone = "Phone is required";
+    else if (!/^[\d\s()+-]{10,}$/.test(phone.replace(/\s/g, "")))
+      newErrors.phone = "Enter a valid phone";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    setSubmitted(true);
+
+    const mailBody = `Service: ${service}%0D%0AName: ${name}%0D%0APhone: ${phone}%0D%0AVehicle/Notes: ${notes}`;
+    window.open(`mailto:jhoneck82@gmail.com?subject=New Booking Request - ${service}&body=${mailBody}`, "_blank");
+  };
+
+  const resetForm = () => {
+    setSubmitted(false);
+    setName("");
+    setPhone("");
+    setNotes("");
+    setService("Tires");
+  };
+
   return (
-    <section id="book" className="relative py-16 md:py-24">
+    <section id="book" className="relative py-16 pb-32 md:py-24 md:pb-24">
       <div className="pointer-events-none absolute inset-0 opacity-30 noise-surface" />
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
         <motion.div
@@ -930,124 +1160,197 @@ function ServiceMenuForm() {
             Service menu—built like a dashboard.
           </motion.h2>
           <motion.p variants={fadeUp} className="mt-4 text-sm text-slate-200/75 md:text-base">
-            Tap a service type, drop your details, and we’ll confirm availability.
+            Tap a service type, drop your details, and we&apos;ll confirm availability.
           </motion.p>
         </motion.div>
 
-        <motion.form
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.75, ease: [0.2, 0.8, 0.2, 1] }}
-          onSubmit={(e) => e.preventDefault()}
           className="glass-panel relative mt-10 overflow-hidden rounded-3xl p-6 md:mt-12 md:p-8"
         >
           <div className="pointer-events-none absolute inset-0 opacity-55 texture-carbon" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(220,38,38,0.18),rgba(15,23,42,0)_55%)]" />
 
-          <div className="relative grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-            <div>
-              <p className="font-mono text-xs uppercase tracking-[0.32em] text-slate-200/60">
-                Service type
-              </p>
+          <AnimatePresence mode="wait">
+            {submitted ? (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
+                className="relative flex flex-col items-center justify-center py-12 text-center"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.15, type: "spring", stiffness: 200, damping: 15 }}
+                  className="mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-green-500/30 bg-green-600/15"
+                >
+                  <Sparkles className="h-9 w-9 text-green-400" />
+                </motion.div>
 
-              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {services.map((s) => {
-                  const Icon = s.icon;
-                  const active = service === s.label;
-
-                  return (
-                    <button
-                      key={s.label}
-                      type="button"
-                      onClick={() => setService(s.label)}
-                      className={
-                        "group flex items-center justify-between gap-3 rounded-2xl border px-4 py-4 text-left transition-colors duration-200 " +
-                        (active
-                          ? "border-red-500/50 bg-red-600/15"
-                          : "border-slate-200/12 bg-slate-950/35 hover:bg-slate-950/45")
-                      }
-                    >
-                      <div>
-                        <div className="font-display text-sm uppercase tracking-[0.18em] text-slate-100">
-                          {s.label}
-                        </div>
-                        <div className="mt-1 font-mono text-[11px] uppercase tracking-[0.22em] text-slate-200/55">
-                          {active ? "Selected" : "Tap to choose"}
-                        </div>
-                      </div>
-                      <Icon className={"h-5 w-5 " + (active ? "text-red-400" : "text-slate-200/70")} />
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="mt-8 grid gap-4 md:grid-cols-2">
-                <div>
-                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-200/60">
-                    Name
-                  </label>
-                  <input
-                    className="mt-2 w-full rounded-xl border border-slate-200/12 bg-slate-950/45 px-4 py-3 font-mono text-sm text-slate-100 outline-none transition-colors focus:border-red-500/50"
-                    placeholder="Full name"
-                  />
-                </div>
-                <div>
-                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-200/60">
-                    Phone
-                  </label>
-                  <input
-                    className="mt-2 w-full rounded-xl border border-slate-200/12 bg-slate-950/45 px-4 py-3 font-mono text-sm text-slate-100 outline-none transition-colors focus:border-red-500/50"
-                    placeholder="(555) 000-0000"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-200/60">
-                    Vehicle / Notes
-                  </label>
-                  <textarea
-                    rows={4}
-                    className="mt-2 w-full resize-none rounded-xl border border-slate-200/12 bg-slate-950/45 px-4 py-3 font-mono text-sm text-slate-100 outline-none transition-colors focus:border-red-500/50"
-                    placeholder="Year / make / model + what you’re experiencing"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col justify-between gap-6">
-              <div className="rounded-2xl border border-slate-200/12 bg-slate-950/35 p-6">
-                <p className="font-mono text-xs uppercase tracking-[0.32em] text-slate-200/60">
-                  Summary
-                </p>
-                <p className="mt-3 font-display text-2xl uppercase tracking-[-0.03em] text-slate-100">
-                  {service}
-                </p>
-                <p className="mt-3 text-sm text-slate-200/75">
-                  We’ll respond with time slots, pricing range, and next steps.
+                <h3 className="font-display text-2xl uppercase tracking-[-0.03em] text-slate-100 md:text-3xl">
+                  Request received!
+                </h3>
+                <p className="mt-3 max-w-md text-sm text-slate-200/75 md:text-base">
+                  We&apos;ll text you at <span className="text-slate-100">{phone}</span> within 10 minutes to confirm your {service.toLowerCase()} appointment.
                 </p>
 
-                <div className="mt-6 space-y-3">
-                  {["Digital inspection video", "Transparent approval", "Final road test"].map((t) => (
-                    <div key={t} className="flex items-start gap-3">
-                      <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full border border-slate-200/12 bg-slate-950/40">
-                        <CheckCircle2 className="h-4 w-4 text-slate-200/70" />
-                      </span>
-                      <span className="text-sm text-slate-200/80">{t}</span>
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                  <a
+                    href="tel:+12812355708"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200/15 bg-slate-950/40 px-6 py-3 font-mono text-xs uppercase tracking-[0.18em] text-slate-200/80 transition-colors hover:bg-slate-200/10"
+                  >
+                    <PhoneCall className="h-4 w-4" />
+                    Call for faster service
+                  </a>
+                  <button
+                    type="button"
+                    onClick={resetForm}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200/15 bg-slate-950/40 px-6 py-3 font-mono text-xs uppercase tracking-[0.18em] text-slate-200/80 transition-colors hover:bg-slate-200/10"
+                  >
+                    <X className="h-4 w-4" />
+                    New request
+                  </button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.form
+                key="form"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onSubmit={handleSubmit}
+                className="relative"
+              >
+                <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+                  <div>
+                    <p className="font-mono text-xs uppercase tracking-[0.32em] text-slate-200/60">
+                      Service type
+                    </p>
+
+                    <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      {services.map((s) => {
+                        const Icon = s.icon;
+                        const active = service === s.label;
+
+                        return (
+                          <button
+                            key={s.label}
+                            type="button"
+                            onClick={() => setService(s.label)}
+                            className={
+                              "group flex items-center justify-between gap-3 rounded-2xl border px-4 py-4 text-left transition-colors duration-200 " +
+                              (active
+                                ? "border-red-500/50 bg-red-600/15"
+                                : "border-slate-200/12 bg-slate-950/35 hover:bg-slate-950/45")
+                            }
+                          >
+                            <div>
+                              <div className="font-display text-sm uppercase tracking-[0.18em] text-slate-100">
+                                {s.label}
+                              </div>
+                              <div className="mt-1 font-mono text-[11px] uppercase tracking-[0.22em] text-slate-200/55">
+                                {active ? "Selected" : "Tap to choose"}
+                              </div>
+                            </div>
+                            <Icon className={"h-5 w-5 " + (active ? "text-red-400" : "text-slate-200/70")} />
+                          </button>
+                        );
+                      })}
                     </div>
-                  ))}
+
+                    <div className="mt-8 grid gap-4 md:grid-cols-2">
+                      <div>
+                        <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-200/60">
+                          Name
+                        </label>
+                        <input
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className={
+                            "mt-2 w-full rounded-xl border bg-slate-950/45 px-4 py-3 font-mono text-sm text-slate-100 outline-none transition-colors focus:border-red-500/50 " +
+                            (errors.name ? "border-red-500/50" : "border-slate-200/12")
+                          }
+                          placeholder="Full name"
+                        />
+                        {errors.name && (
+                          <p className="mt-1 font-mono text-[10px] uppercase tracking-wide text-red-400">{errors.name}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-200/60">
+                          Phone
+                        </label>
+                        <input
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className={
+                            "mt-2 w-full rounded-xl border bg-slate-950/45 px-4 py-3 font-mono text-sm text-slate-100 outline-none transition-colors focus:border-red-500/50 " +
+                            (errors.phone ? "border-red-500/50" : "border-slate-200/12")
+                          }
+                          placeholder="(555) 000-0000"
+                        />
+                        {errors.phone && (
+                          <p className="mt-1 font-mono text-[10px] uppercase tracking-wide text-red-400">{errors.phone}</p>
+                        )}
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-200/60">
+                          Vehicle / Notes
+                        </label>
+                        <textarea
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value)}
+                          rows={4}
+                          className="mt-2 w-full resize-none rounded-xl border border-slate-200/12 bg-slate-950/45 px-4 py-3 font-mono text-sm text-slate-100 outline-none transition-colors focus:border-red-500/50"
+                          placeholder="Year / make / model + what you're experiencing"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col justify-between gap-6">
+                    <div className="rounded-2xl border border-slate-200/12 bg-slate-950/35 p-6">
+                      <p className="font-mono text-xs uppercase tracking-[0.32em] text-slate-200/60">
+                        Summary
+                      </p>
+                      <p className="mt-3 font-display text-2xl uppercase tracking-[-0.03em] text-slate-100">
+                        {service}
+                      </p>
+                      <p className="mt-3 text-sm text-slate-200/75">
+                        We&apos;ll respond with time slots, pricing range, and next steps.
+                      </p>
+
+                      <div className="mt-6 space-y-3">
+                        {["Digital inspection video", "Transparent approval", "Final road test"].map((t) => (
+                          <div key={t} className="flex items-start gap-3">
+                            <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full border border-slate-200/12 bg-slate-950/40">
+                              <CheckCircle2 className="h-4 w-4 text-slate-200/70" />
+                            </span>
+                            <span className="text-sm text-slate-200/80">{t}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <MagneticButton className="w-full justify-center" icon={ArrowRight}>
+                      Request Appointment
+                    </MagneticButton>
+
+                    <div className="text-center font-mono text-[11px] uppercase tracking-[0.22em] text-slate-200/50">
+                      Or call <a href="tel:+12812355708" className="text-slate-200/70 underline">281-235-5708</a> for 24/7 towing priority.
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <MagneticButton className="w-full justify-center" icon={ArrowRight}>
-                Request Appointment
-              </MagneticButton>
-
-              <div className="text-center font-mono text-[11px] uppercase tracking-[0.22em] text-slate-200/50">
-                Or call for 24/7 towing priority.
-              </div>
-            </div>
-          </div>
-        </motion.form>
+              </motion.form>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </section>
   );
@@ -1125,6 +1428,7 @@ export default function Page() {
 
       <CustomCursor />
       <FloatingNav />
+      <MobileCTA />
       <TrustTicker />
       <ServicesBento />
       <ProcessTimeline />
