@@ -42,12 +42,14 @@ const stagger: Variants = {
 };
 
 function RevealText({ text }: { text: string }) {
-  const chars = useMemo(() => Array.from(text), [text]);
+  const words = useMemo(() => text.split(" "), [text]);
+
+  let charIndex = 0;
 
   return (
     <motion.span
       aria-label={text}
-      className="inline-block"
+      className="inline"
       initial="hidden"
       animate="visible"
       variants={{
@@ -55,23 +57,43 @@ function RevealText({ text }: { text: string }) {
         visible: { transition: { staggerChildren: 0.032, delayChildren: 0.12 } },
       }}
     >
-      {chars.map((char, idx) => (
-        <motion.span
-          key={`${char}-${idx}`}
-          aria-hidden="true"
-          className="inline-block"
-          variants={{
-            hidden: { y: "0.9em", opacity: 0, filter: "blur(6px)" },
-            visible: {
-              y: "0em",
-              opacity: 1,
-              filter: "blur(0px)",
-              transition: { duration: 0.72, ease: [0.2, 0.8, 0.2, 1] },
-            },
-          }}
-        >
-          {char === " " ? "\u00A0" : char}
-        </motion.span>
+      {words.map((word, wordIdx) => (
+        <span key={wordIdx} className="inline-block whitespace-nowrap">
+          {Array.from(word).map((char) => {
+            const idx = charIndex++;
+            return (
+              <motion.span
+                key={idx}
+                aria-hidden="true"
+                className="inline-block"
+                variants={{
+                  hidden: { y: "0.9em", opacity: 0, filter: "blur(6px)" },
+                  visible: {
+                    y: "0em",
+                    opacity: 1,
+                    filter: "blur(0px)",
+                    transition: { duration: 0.72, ease: [0.2, 0.8, 0.2, 1] },
+                  },
+                }}
+              >
+                {char}
+              </motion.span>
+            );
+          })}
+          {wordIdx < words.length - 1 && (
+            <motion.span
+              key={`space-${wordIdx}`}
+              aria-hidden="true"
+              className="inline-block"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: { opacity: 1, transition: { duration: 0.1 } },
+              }}
+            >
+              {"\u00A0"}
+            </motion.span>
+          )}
+        </span>
       ))}
     </motion.span>
   );
