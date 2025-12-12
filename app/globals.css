@@ -12,6 +12,16 @@ body {
   color: #e2e8f0;
 }
 
+@media (pointer: fine) {
+  body {
+    cursor: none;
+  }
+  
+  a, button, input, textarea, select, [role="button"] {
+    cursor: none;
+  }
+}
+
 html.lenis {
   height: auto;
 }

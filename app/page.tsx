@@ -23,9 +23,82 @@ import {
   Wrench,
   type LucideIcon,
 } from "lucide-react";
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { useSmoothScroll } from "@/components/smooth-scroll";
+
+function CustomCursor() {
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const [isHovering, setIsHovering] = useState(false);
+
+  useEffect(() => {
+    const cursor = cursorRef.current;
+    if (!cursor) return;
+
+    const moveCursor = (e: MouseEvent) => {
+      cursor.style.left = `${e.clientX}px`;
+      cursor.style.top = `${e.clientY}px`;
+    };
+
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("button, a, [role='button'], input, textarea, select")) {
+        setIsHovering(true);
+      } else {
+        setIsHovering(false);
+      }
+    };
+
+    window.addEventListener("mousemove", moveCursor);
+    window.addEventListener("mouseover", handleMouseOver);
+
+    return () => {
+      window.removeEventListener("mousemove", moveCursor);
+      window.removeEventListener("mouseover", handleMouseOver);
+    };
+  }, []);
+
+  return (
+    <motion.div
+      ref={cursorRef}
+      className="pointer-events-none fixed z-[9999] hidden md:block"
+      style={{ transform: "translate(-50%, -50%)" }}
+      animate={{
+        scale: isHovering ? 1.5 : 1,
+        rotate: isHovering ? 0 : 360,
+      }}
+      transition={{
+        rotate: { duration: 2, repeat: Infinity, ease: "linear" },
+        scale: { duration: 0.2 },
+      }}
+    >
+      <svg
+        width="32"
+        height="32"
+        viewBox="0 0 32 32"
+        fill="none"
+        className="drop-shadow-[0_0_8px_rgba(220,38,38,0.5)]"
+      >
+        <circle cx="16" cy="16" r="14" stroke="rgba(226,232,240,0.6)" strokeWidth="2" fill="rgba(15,23,42,0.8)" />
+        <circle cx="16" cy="16" r="10" stroke="rgba(226,232,240,0.3)" strokeWidth="1" fill="none" />
+        <circle cx="16" cy="16" r="4" fill="rgba(220,38,38,0.8)" />
+        {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
+          <line
+            key={angle}
+            x1="16"
+            y1="6"
+            x2="16"
+            y2="10"
+            stroke="rgba(226,232,240,0.5)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            transform={`rotate(${angle} 16 16)`}
+          />
+        ))}
+      </svg>
+    </motion.div>
+  );
+}
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
@@ -215,7 +288,7 @@ function TrustTicker() {
         <div className="pointer-events-none absolute inset-0 opacity-35 noise-surface" />
         <div
           className="flex w-[200%] select-none items-center gap-10 whitespace-nowrap py-2.5 text-[10px] font-display uppercase tracking-[0.24em] text-slate-200/80 animate-marquee sm:py-3 sm:text-xs sm:tracking-[0.34em]"
-          style={{ animationDuration: "7.5s" }}
+          style={{ animationDuration: "25s" }}
         >
           <div className="flex w-1/2 items-center justify-around gap-10">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -274,6 +347,11 @@ function ServicesBento() {
           <motion.article
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ 
+              y: -8, 
+              boxShadow: "0 25px 50px -12px rgba(220, 38, 38, 0.25), 0 0 0 1px rgba(226, 232, 240, 0.1)",
+              transition: { duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }
+            }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
             onMouseEnter={() => setActive("tires")}
@@ -281,7 +359,7 @@ function ServicesBento() {
             onFocus={() => setActive("tires")}
             onBlur={() => setActive(null)}
             className={
-              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-6 outline-none md:p-8 " +
+              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-6 outline-none md:p-8 transition-all duration-300 " +
               "md:col-span-7 md:row-span-2 " +
               (dim("tires") ? "opacity-40" : "opacity-100")
             }
@@ -355,6 +433,11 @@ function ServicesBento() {
           <motion.article
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ 
+              y: -8, 
+              boxShadow: "0 25px 50px -12px rgba(220, 38, 38, 0.25), 0 0 0 1px rgba(226, 232, 240, 0.1)",
+              transition: { duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }
+            }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1], delay: 0.04 }}
             onMouseEnter={() => setActive("diagnostics")}
@@ -362,7 +445,7 @@ function ServicesBento() {
             onFocus={() => setActive("diagnostics")}
             onBlur={() => setActive(null)}
             className={
-              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-6 outline-none md:p-8 " +
+              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-6 outline-none md:p-8 transition-all duration-300 " +
               "md:col-span-5 md:row-span-3 " +
               (dim("diagnostics") ? "opacity-40" : "opacity-100")
             }
@@ -417,6 +500,11 @@ function ServicesBento() {
           <motion.article
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ 
+              y: -8, 
+              boxShadow: "0 25px 50px -12px rgba(220, 38, 38, 0.25), 0 0 0 1px rgba(226, 232, 240, 0.1)",
+              transition: { duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }
+            }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1], delay: 0.07 }}
             onMouseEnter={() => setActive("brakes")}
@@ -424,7 +512,7 @@ function ServicesBento() {
             onFocus={() => setActive("brakes")}
             onBlur={() => setActive(null)}
             className={
-              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-6 outline-none md:p-8 " +
+              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-6 outline-none md:p-8 transition-all duration-300 " +
               "md:col-span-7 md:row-span-1 " +
               (dim("brakes") ? "opacity-40" : "opacity-100")
             }
@@ -455,6 +543,11 @@ function ServicesBento() {
           <motion.article
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ 
+              y: -8, 
+              boxShadow: "0 25px 50px -12px rgba(220, 38, 38, 0.25), 0 0 0 1px rgba(226, 232, 240, 0.1)",
+              transition: { duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }
+            }}
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1], delay: 0.09 }}
             onMouseEnter={() => setActive("roadside")}
@@ -462,7 +555,7 @@ function ServicesBento() {
             onFocus={() => setActive("roadside")}
             onBlur={() => setActive(null)}
             className={
-              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-6 outline-none md:p-8 " +
+              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-6 outline-none md:p-8 transition-all duration-300 " +
               "md:col-span-7 md:row-span-1 " +
               (dim("roadside") ? "opacity-40" : "opacity-100")
             }
@@ -576,9 +669,14 @@ function ProcessTimeline() {
                   key={s.title}
                   initial={{ opacity: 0, y: 22 }}
                   whileInView={{ opacity: 1, y: 0 }}
+                  whileHover={{ 
+                    y: -4, 
+                    boxShadow: "0 20px 40px -12px rgba(220, 38, 38, 0.2), 0 0 0 1px rgba(226, 232, 240, 0.08)",
+                    transition: { duration: 0.25 }
+                  }}
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.65, ease: [0.2, 0.8, 0.2, 1] }}
-                  className="glass-panel relative overflow-hidden rounded-2xl p-6 md:p-7"
+                  className="glass-panel relative overflow-hidden rounded-2xl p-6 md:p-7 transition-all duration-300"
                 >
                   <div className="pointer-events-none absolute inset-0 opacity-55 texture-carbon" />
                   <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(226,232,240,0.12),rgba(15,23,42,0)_55%)]" />
@@ -674,9 +772,14 @@ function Reviews() {
               key={r.name}
               initial={{ opacity: 0, y: 26 }}
               whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ 
+                y: -6, 
+                boxShadow: "0 20px 40px -12px rgba(220, 38, 38, 0.2), 0 0 0 1px rgba(226, 232, 240, 0.08)",
+                transition: { duration: 0.25 }
+              }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1], delay: i * 0.04 }}
-              className="glass-panel relative overflow-hidden rounded-2xl p-6 md:p-7"
+              className="glass-panel relative overflow-hidden rounded-2xl p-6 md:p-7 transition-all duration-300"
             >
               <div className="pointer-events-none absolute inset-0 opacity-55 texture-carbon" />
               <div className="relative">
@@ -1005,17 +1108,22 @@ export default function Page() {
                 Book Appointment
               </MagneticButton>
 
-              <div className="glass-panel inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 sm:w-auto sm:px-5 sm:py-3">
+              <button
+                type="button"
+                onClick={() => scrollTo("#services", { offset: -80 })}
+                className="glass-panel inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 transition-all duration-300 hover:bg-slate-200/10 hover:border-slate-200/25 sm:w-auto sm:px-5 sm:py-3"
+              >
                 <Wrench className="h-4 w-4 text-slate-200/70" />
                 <span className="font-mono text-xs uppercase tracking-[0.22em] text-slate-200/70">
                   Digital inspections
                 </span>
-              </div>
+              </button>
             </motion.div>
           </motion.div>
         </div>
       </section>
 
+      <CustomCursor />
       <FloatingNav />
       <TrustTicker />
       <ServicesBento />
