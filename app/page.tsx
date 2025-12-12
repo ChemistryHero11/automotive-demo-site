@@ -157,7 +157,7 @@ function FloatingNav() {
       initial={{ opacity: 0, y: 20, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1], delay: 0.4 }}
-      className="fixed bottom-6 left-1/2 z-50 w-[min(640px,calc(100%-2rem))] -translate-x-1/2"
+      className="fixed bottom-4 left-1/2 z-50 w-[min(640px,calc(100%-2rem))] -translate-x-1/2 sm:bottom-6"
     >
       <div className="glass-panel relative overflow-hidden rounded-full px-3 py-3 shadow-[0_30px_90px_rgba(0,0,0,0.55)]">
         <div className="pointer-events-none absolute inset-0 opacity-60 noise-surface" />
@@ -170,7 +170,7 @@ function FloatingNav() {
               type="button"
               onClick={() => scrollTo(l.href, { offset: -80 })}
               className={
-                "rounded-full px-2 py-2 text-xs font-display uppercase tracking-[0.22em] " +
+                "rounded-full px-2 py-3 text-[10px] font-display uppercase tracking-[0.14em] sm:py-2 sm:text-xs sm:tracking-[0.22em] " +
                 "text-slate-200/90 transition-colors duration-200 " +
                 "hover:bg-slate-200/10 hover:text-slate-100"
               }
@@ -192,7 +192,7 @@ function TrustTicker() {
       <div className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 opacity-35 noise-surface" />
         <div
-          className="flex w-[200%] select-none items-center gap-10 whitespace-nowrap py-3 text-xs font-display uppercase tracking-[0.34em] text-slate-200/80 animate-marquee"
+          className="flex w-[200%] select-none items-center gap-10 whitespace-nowrap py-2.5 text-[10px] font-display uppercase tracking-[0.24em] text-slate-200/80 animate-marquee sm:py-3 sm:text-xs sm:tracking-[0.34em]"
           style={{ animationDuration: "7.5s" }}
         >
           <div className="flex w-1/2 items-center justify-around gap-10">
@@ -219,9 +219,9 @@ function ServicesBento() {
   const dim = (id: BentoId) => (active ? active !== id : false);
 
   return (
-    <section id="services" className="relative py-24">
+    <section id="services" className="relative py-16 md:py-24">
       <div className="pointer-events-none absolute inset-0 opacity-35 noise-surface" />
-      <div className="mx-auto w-full max-w-7xl px-6">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
         <motion.div
           className="max-w-2xl"
           initial="hidden"
@@ -231,13 +231,13 @@ function ServicesBento() {
         >
           <motion.p
             variants={fadeUp}
-            className="font-mono text-xs uppercase tracking-[0.32em] text-slate-200/70"
+            className="font-mono text-xs uppercase tracking-[0.22em] text-slate-200/70 sm:tracking-[0.32em]"
           >
             Signature services
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="mt-4 font-display text-4xl uppercase tracking-[-0.04em] text-slate-100 md:text-5xl"
+            className="mt-4 font-display text-3xl uppercase tracking-[-0.04em] text-slate-100 sm:text-4xl md:text-5xl"
           >
             Built like a race team.
             <span className="text-red-500"> Run like a concierge.</span>
@@ -259,7 +259,7 @@ function ServicesBento() {
             onFocus={() => setActive("tires")}
             onBlur={() => setActive(null)}
             className={
-              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-8 outline-none " +
+              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-6 outline-none md:p-8 " +
               "md:col-span-7 md:row-span-2 " +
               (dim("tires") ? "opacity-40" : "opacity-100")
             }
@@ -291,7 +291,7 @@ function ServicesBento() {
 
             <motion.div
               aria-hidden="true"
-              className="pointer-events-none absolute -bottom-16 -right-10 h-64 w-64 rounded-full"
+              className="pointer-events-none absolute -bottom-16 -right-10 hidden h-64 w-64 rounded-full sm:block"
               animate={
                 active === "tires"
                   ? { opacity: 1, rotate: 360, scale: 1 }
@@ -340,7 +340,7 @@ function ServicesBento() {
             onFocus={() => setActive("diagnostics")}
             onBlur={() => setActive(null)}
             className={
-              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-8 outline-none " +
+              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-6 outline-none md:p-8 " +
               "md:col-span-5 md:row-span-3 " +
               (dim("diagnostics") ? "opacity-40" : "opacity-100")
             }
@@ -402,7 +402,7 @@ function ServicesBento() {
             onFocus={() => setActive("brakes")}
             onBlur={() => setActive(null)}
             className={
-              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-8 outline-none " +
+              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-6 outline-none md:p-8 " +
               "md:col-span-7 md:row-span-1 " +
               (dim("brakes") ? "opacity-40" : "opacity-100")
             }
@@ -440,7 +440,7 @@ function ServicesBento() {
             onFocus={() => setActive("roadside")}
             onBlur={() => setActive(null)}
             className={
-              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-8 outline-none " +
+              "glass-panel group relative col-span-12 overflow-hidden rounded-2xl p-6 outline-none md:p-8 " +
               "md:col-span-7 md:row-span-1 " +
               (dim("roadside") ? "opacity-40" : "opacity-100")
             }
@@ -509,9 +509,9 @@ function ProcessTimeline() {
   );
 
   return (
-    <section className="relative py-24">
+    <section className="relative py-16 md:py-24">
       <div className="pointer-events-none absolute inset-0 opacity-30 noise-surface" />
-      <div className="mx-auto w-full max-w-7xl px-6">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
         <motion.div
           className="max-w-2xl"
           initial="hidden"
@@ -521,13 +521,13 @@ function ProcessTimeline() {
         >
           <motion.p
             variants={fadeUp}
-            className="font-mono text-xs uppercase tracking-[0.32em] text-slate-200/70"
+            className="font-mono text-xs uppercase tracking-[0.22em] text-slate-200/70 sm:tracking-[0.32em]"
           >
             The process
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="mt-4 font-display text-4xl uppercase tracking-[-0.04em] text-slate-100 md:text-5xl"
+            className="mt-4 font-display text-3xl uppercase tracking-[-0.04em] text-slate-100 sm:text-4xl md:text-5xl"
           >
             Road-tested service—step by step.
           </motion.h2>
@@ -610,9 +610,9 @@ function Reviews() {
   );
 
   return (
-    <section id="reviews" className="relative py-24">
+    <section id="reviews" className="relative py-16 md:py-24">
       <div className="pointer-events-none absolute inset-0 opacity-28 noise-surface" />
-      <div className="mx-auto w-full max-w-7xl px-6">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
         <motion.div
           className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between"
           initial="hidden"
@@ -623,13 +623,13 @@ function Reviews() {
           <div className="max-w-2xl">
             <motion.p
               variants={fadeUp}
-              className="font-mono text-xs uppercase tracking-[0.32em] text-slate-200/70"
+              className="font-mono text-xs uppercase tracking-[0.22em] text-slate-200/70 sm:tracking-[0.32em]"
             >
               Reviews
             </motion.p>
             <motion.h2
               variants={fadeUp}
-              className="mt-4 font-display text-4xl uppercase tracking-[-0.04em] text-slate-100 md:text-5xl"
+              className="mt-4 font-display text-3xl uppercase tracking-[-0.04em] text-slate-100 sm:text-4xl md:text-5xl"
             >
               500+ five-star finishes.
             </motion.h2>
@@ -654,7 +654,7 @@ function Reviews() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1], delay: i * 0.04 }}
-              className="glass-panel relative overflow-hidden rounded-2xl p-7"
+              className="glass-panel relative overflow-hidden rounded-2xl p-6 md:p-7"
             >
               <div className="pointer-events-none absolute inset-0 opacity-55 texture-carbon" />
               <div className="relative">
@@ -697,9 +697,9 @@ function Faq() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="relative py-24">
+    <section id="faq" className="relative py-16 md:py-24">
       <div className="pointer-events-none absolute inset-0 opacity-30 noise-surface" />
-      <div className="mx-auto w-full max-w-7xl px-6">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
         <motion.div
           className="max-w-2xl"
           initial="hidden"
@@ -709,13 +709,13 @@ function Faq() {
         >
           <motion.p
             variants={fadeUp}
-            className="font-mono text-xs uppercase tracking-[0.32em] text-slate-200/70"
+            className="font-mono text-xs uppercase tracking-[0.22em] text-slate-200/70 sm:tracking-[0.32em]"
           >
             FAQ
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="mt-4 font-display text-4xl uppercase tracking-[-0.04em] text-slate-100 md:text-5xl"
+            className="mt-4 font-display text-3xl uppercase tracking-[-0.04em] text-slate-100 sm:text-4xl md:text-5xl"
           >
             Answers, without the grease.
           </motion.h2>
@@ -737,9 +737,9 @@ function Faq() {
                 <button
                   type="button"
                   onClick={() => setOpen((v) => (v === idx ? null : idx))}
-                  className="flex w-full items-center justify-between gap-6 px-6 py-5 text-left"
+                  className="flex w-full items-center justify-between gap-6 px-5 py-4 text-left sm:px-6 sm:py-5"
                 >
-                  <span className="font-display text-lg uppercase tracking-[-0.03em] text-slate-100">
+                  <span className="font-display text-base uppercase tracking-[-0.03em] text-slate-100 sm:text-lg">
                     {f.q}
                   </span>
                   <motion.span
@@ -757,7 +757,7 @@ function Faq() {
                   transition={{ duration: 0.32, ease: [0.2, 0.8, 0.2, 1] }}
                   className="overflow-hidden"
                 >
-                  <div className="px-6 pb-6 text-sm text-slate-200/75">{f.a}</div>
+                  <div className="px-5 pb-5 text-sm text-slate-200/75 sm:px-6 sm:pb-6">{f.a}</div>
                 </motion.div>
               </motion.div>
             );
@@ -782,9 +782,9 @@ function ServiceMenuForm() {
   );
 
   return (
-    <section id="book" className="relative py-24">
+    <section id="book" className="relative py-16 md:py-24">
       <div className="pointer-events-none absolute inset-0 opacity-30 noise-surface" />
-      <div className="mx-auto w-full max-w-7xl px-6">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
         <motion.div
           className="max-w-2xl"
           initial="hidden"
@@ -794,13 +794,13 @@ function ServiceMenuForm() {
         >
           <motion.p
             variants={fadeUp}
-            className="font-mono text-xs uppercase tracking-[0.32em] text-slate-200/70"
+            className="font-mono text-xs uppercase tracking-[0.22em] text-slate-200/70 sm:tracking-[0.32em]"
           >
             Book now
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="mt-4 font-display text-4xl uppercase tracking-[-0.04em] text-slate-100 md:text-5xl"
+            className="mt-4 font-display text-3xl uppercase tracking-[-0.04em] text-slate-100 sm:text-4xl md:text-5xl"
           >
             Service menu—built like a dashboard.
           </motion.h2>
@@ -815,7 +815,7 @@ function ServiceMenuForm() {
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.75, ease: [0.2, 0.8, 0.2, 1] }}
           onSubmit={(e) => e.preventDefault()}
-          className="glass-panel relative mt-12 overflow-hidden rounded-3xl p-8"
+          className="glass-panel relative mt-10 overflow-hidden rounded-3xl p-6 md:mt-12 md:p-8"
         >
           <div className="pointer-events-none absolute inset-0 opacity-55 texture-carbon" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(220,38,38,0.18),rgba(15,23,42,0)_55%)]" />
@@ -826,7 +826,7 @@ function ServiceMenuForm() {
                 Service type
               </p>
 
-              <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {services.map((s) => {
                   const Icon = s.icon;
                   const active = service === s.label;
@@ -948,7 +948,7 @@ export default function Page() {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-900/55 to-slate-900/10" />
         <div className="pointer-events-none absolute inset-0 opacity-35 noise-surface" />
 
-        <div className="relative mx-auto w-full max-w-7xl px-6 pb-28">
+        <div className="relative mx-auto w-full max-w-7xl px-4 pb-28 sm:px-6">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -957,14 +957,14 @@ export default function Page() {
           >
             <motion.p
               variants={fadeUp}
-              className="font-mono text-xs uppercase tracking-[0.34em] text-slate-200/70"
+              className="font-mono text-xs uppercase tracking-[0.22em] text-slate-200/70 sm:tracking-[0.34em]"
             >
               Pro Auto Services
             </motion.p>
 
             <motion.h1
               variants={fadeUp}
-              className="mt-4 font-display text-5xl uppercase tracking-[-0.05em] text-slate-100 md:text-7xl lg:text-8xl"
+              className="mt-4 font-display text-4xl uppercase tracking-[-0.05em] text-slate-100 sm:text-5xl md:text-7xl lg:text-8xl"
             >
               <RevealText text="DEALER PRECISION. LOCAL HEART." />
             </motion.h1>
@@ -974,12 +974,16 @@ export default function Page() {
               clarity, and control.
             </motion.p>
 
-            <motion.div variants={fadeUp} className="mt-9 flex flex-wrap items-center gap-4">
-              <MagneticButton onClick={() => scrollTo("#book", { offset: -80 })} icon={ArrowRight}>
+            <motion.div variants={fadeUp} className="mt-9 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+              <MagneticButton
+                className="w-full justify-center sm:w-auto"
+                onClick={() => scrollTo("#book", { offset: -80 })}
+                icon={ArrowRight}
+              >
                 Book Appointment
               </MagneticButton>
 
-              <div className="glass-panel inline-flex items-center gap-2 rounded-full px-5 py-3">
+              <div className="glass-panel inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 sm:w-auto sm:px-5 sm:py-3">
                 <Wrench className="h-4 w-4 text-slate-200/70" />
                 <span className="font-mono text-xs uppercase tracking-[0.22em] text-slate-200/70">
                   Digital inspections
@@ -999,7 +1003,7 @@ export default function Page() {
       <ServiceMenuForm />
 
       <footer className="border-t border-slate-200/10 py-10">
-        <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-4 px-6 md:flex-row md:items-center">
+        <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-4 px-4 sm:px-6 md:flex-row md:items-center">
           <div className="font-display text-sm uppercase tracking-[0.22em] text-slate-200/70">
             Pro Auto Services
           </div>
