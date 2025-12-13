@@ -380,12 +380,12 @@ function TrustTicker() {
           className="flex w-[200%] select-none items-center gap-10 whitespace-nowrap py-2.5 text-[10px] font-display uppercase tracking-[0.24em] text-slate-200/80 animate-marquee sm:py-3 sm:text-xs sm:tracking-[0.34em]"
           style={{ animationDuration: "25s" }}
         >
-          <div className="flex w-1/2 items-center justify-around gap-10">
+          <div className="flex w-1/2 flex-shrink-0 items-center justify-around gap-10">
             {Array.from({ length: 4 }).map((_, i) => (
               <span key={`a-${i}`}>{line}</span>
             ))}
           </div>
-          <div className="flex w-1/2 items-center justify-around gap-10" aria-hidden="true">
+          <div className="flex w-1/2 flex-shrink-0 items-center justify-around gap-10" aria-hidden="true">
             {Array.from({ length: 4 }).map((_, i) => (
               <span key={`b-${i}`}>{line}</span>
             ))}
